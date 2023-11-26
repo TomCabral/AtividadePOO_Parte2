@@ -1,63 +1,44 @@
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import javax.persistence.criteria.CriteriaQuery;
-import java.util.List;
+package br.gov.cesarschool.poo.bonusvendas.dao;
 
-public class DAOGenerico<T> {
+import br.edu.cesarschool.next.oo.persistenciaobjetos.CadastroObjetos;
+import br.gov.cesarschool.poo.bonusvendas.entidade.Registro;
 
-    private static final EntityManagerFactory emFactory;
-    private EntityManager entityManager;
+public class DAOGenerico {
 
-    static {
-        emFactory = Persistence.createEntityManagerFactory("bonusVendasPU");
+    private CadastroObjetos cadastro;
+
+    public DAOGenerico(Class<?> tipo) {
+        this.cadastro = new CadastroObjetos(tipo);
     }
 
-    public DAOGenerico() {
-        this.entityManager = emFactory.createEntityManager();
-    }
-
-    public void salvar(T entidade) {
-        try {
-            entityManager.getTransaction().begin();
-            entityManager.persist(entidade);
-            entityManager.getTransaction().commit();
-        } catch (Exception ex) {
-            entityManager.getTransaction().rollback();
+    public boolean incluir(Registro reg) {
+        if (buscar(reg.getIdUnico()) != null) {
+            return false;
+        } else {
+            cadastro.incluir(reg, reg.getIdUnico());
+            return true;
         }
     }
 
-    public void atualizar(T entidade) {
-        try {
-            entityManager.getTransaction().begin();
-            entityManager.merge(entidade);
-            entityManager.getTransaction().commit();
-        } catch (Exception ex) {
-            entityManager.getTransaction().rollback();
+    public boolean alterar(Registro reg) {
+        if (buscar(reg.getIdUnico()) == null) {
+            return false;
+        } else {
+            cadastro.alterar(reg, reg.getIdUnico());
+            return true;
         }
     }
 
-    public T buscarPorId(Class<T> classe, Long id) {
-        return entityManager.find(classe, id);
+    public Registro buscar(String id) {
+        return (Registro) cadastro.buscar(id);
     }
 
-    public List<T> listarTodos(Class<T> classe) {
-        CriteriaQuery<T> query = entityManager.getCriteriaBuilder().createQuery(classe);
-        query.select(query.from(classe));
-        return entityManager.createQuery(query).getResultList();
-    }
-
-    public void deletar(T entidade) {
-        try {
-            entityManager.getTransaction().begin();
-            entityManager.remove(entityManager.contains(entidade) ? entidade : entityManager.merge(entidade));
-            entityManager.getTransaction().commit();
-        } catch (Exception ex) {
-            entityManager.getTransaction().rollback();
+    public Registro[] buscarTodos() {
+        Object[] objs = cadastro.buscarTodos();
+        Registro[] registros = new Registro[objs.length];
+        for (int i = 0; i < objs.length; i++) {
+            registros[i] = (Registro) objs[i];
         }
-    }
-
-    public void fechar() {
-        entityManager.close();
+        return registros;
     }
 }

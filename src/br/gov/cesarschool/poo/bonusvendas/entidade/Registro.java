@@ -1,11 +1,12 @@
 package br.gov.cesarschool.poo.bonusvendas.entidade;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import br.gov.cesarschool.poo.bonusvendas.entidade.geral.Endereco;
 import br.gov.cesarschool.poo.bonusvendas.entidade.geral.Sexo;
 
-public class Registro {
+public abstract class Registro implements Serializable {
 
     private List<LancamentoBonus> lancamentos;
     private Vendedor vendedor;
@@ -16,6 +17,8 @@ public class Registro {
     public Registro() {
         lancamentos = new ArrayList<>();
     }
+
+    public abstract String getIdUnico();
 
     public void adicionarLancamento(LancamentoBonus lancamento) {
         lancamentos.add(lancamento);
@@ -56,6 +59,4 @@ public class Registro {
     public CaixaDeBonus getCaixaDeBonus() {
         return caixaDeBonus;
     }
-
-    // Métodos adicionais conforme necessário
 }
