@@ -87,7 +87,7 @@ public class AcumuloResgateMediator {
     public CaixaDeBonus[] listaCaixaDeBonusPorSaldoMaior(double saldoInicial) {
         CaixaDeBonus[] todasAsCaixas = repositorioCaixaDeBonus.buscarTodos();
 
-        Arrays.sort(todasAsCaixas, new ComparadorCaixaDeBonusSaldoDec());
+        Arrays.sort(todasAsCaixas, ComparadorCaixaDeBonusSaldoDec.getInstance());
 
         CaixaDeBonus[] caixasFiltradas = Arrays.stream(todasAsCaixas)
                 .filter(caixa -> caixa.getSaldo() >= saldoInicial)
@@ -111,18 +111,17 @@ public class AcumuloResgateMediator {
 
         return lancamentosFiltrados.toArray(new LancamentoBonus[0]);
     }
-}
 
-class ComparadorCaixaDeBonusSaldoDec implements Comparator<CaixaDeBonus> {
-    @Override
-    public int compare(CaixaDeBonus caixa1, CaixaDeBonus caixa2) {
-        return Double.compare(caixa2.getSaldo(), caixa1.getSaldo());
+    public CaixaDeBonus[] listarCaixasDeBonusOrdenadasPorSaldo() {
+        CaixaDeBonus[] caixas = repositorioCaixaDeBonus.buscarTodos();
+        Arrays.sort(caixas, ComparadorCaixaDeBonusSaldoDec.getInstance());
+        return caixas;
     }
-}
 
-class ComparadorLancamentoBonusDataHoraDec implements Comparator<LancamentoBonus> {
-    @Override
-    public int compare(LancamentoBonus lancamento1, LancamentoBonus lancamento2) {
-        return lancamento2.getDataHoraLancamento().compareTo(lancamento1.getDataHoraLancamento());
+    class ComparadorLancamentoBonusDataHoraDec implements Comparator<LancamentoBonus> {
+        @Override
+        public int compare(LancamentoBonus lancamento1, LancamentoBonus lancamento2) {
+            return lancamento2.getDataHoraLancamento().compareTo(lancamento1.getDataHoraLancamento());
+        }
     }
 }
