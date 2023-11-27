@@ -3,15 +3,15 @@ package br.gov.cesarschool.poo.bonusvendas.dao;
 import br.edu.cesarschool.next.oo.persistenciaobjetos.CadastroObjetos;
 import br.gov.cesarschool.poo.bonusvendas.entidade.Registro;
 
-public class DAOGenerico {
+public class DAOGenerico<T extends Registro> {
 
     private CadastroObjetos cadastro;
 
-    public DAOGenerico(Class<?> tipo) {
+    public DAOGenerico(Class<T> tipo) {
         this.cadastro = new CadastroObjetos(tipo);
     }
 
-    public boolean incluir(Registro reg) {
+    public boolean incluir(T reg) {
         if (buscar(reg.getIdUnico()) != null) {
             return false;
         } else {
@@ -20,7 +20,7 @@ public class DAOGenerico {
         }
     }
 
-    public boolean alterar(Registro reg) {
+    public boolean alterar(T reg) {
         if (buscar(reg.getIdUnico()) == null) {
             return false;
         } else {
@@ -29,15 +29,15 @@ public class DAOGenerico {
         }
     }
 
-    public Registro buscar(String id) {
-        return (Registro) cadastro.buscar(id);
+    public T buscar(String id) {
+        return (T) cadastro.buscar(id);
     }
 
-    public Registro[] buscarTodos() {
+    public T[] buscarTodos() {
         Object[] objs = cadastro.buscarTodos();
-        Registro[] registros = new Registro[objs.length];
+        T[] registros = (T[]) java.lang.reflect.Array.newInstance(objs.getClass().getComponentType(), objs.length);
         for (int i = 0; i < objs.length; i++) {
-            registros[i] = (Registro) objs[i];
+            registros[i] = (T) objs[i];
         }
         return registros;
     }
