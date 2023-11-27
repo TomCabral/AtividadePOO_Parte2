@@ -30,14 +30,12 @@ public class LancamentoBonusDAO {
 		}		
 	}
 	public LancamentoBonus buscar(String codigo) {
-		// Esta operação entre () vai ter significado mais à frente! 
 		return (LancamentoBonus)cadastro.buscar(codigo);
 	}
 	public LancamentoBonus[] buscarTodos() {
 		Serializable[] rets = cadastro.buscarTodos(LancamentoBonus.class);
 		LancamentoBonus[] lancamentos = new LancamentoBonus[rets.length];
 		for(int i=0; i<rets.length; i++) {
-			// Esta operação entre () vai ter significado mais à frente! 
 			lancamentos[i] = (LancamentoBonus)rets[i];
 		}
 		return lancamentos;

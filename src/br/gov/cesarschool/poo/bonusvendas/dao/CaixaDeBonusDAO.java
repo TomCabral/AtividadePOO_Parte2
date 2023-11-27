@@ -1,7 +1,6 @@
 package br.gov.cesarschool.poo.bonusvendas.dao;
 
 import java.io.Serializable;
-
 import br.edu.cesarschool.next.oo.persistenciaobjetos.CadastroObjetos;
 import br.gov.cesarschool.poo.bonusvendas.entidade.CaixaDeBonus;
 
@@ -27,14 +26,12 @@ public class CaixaDeBonusDAO {
 		}		
 	}
 	public CaixaDeBonus buscar(long codigo) {
-		// Esta opera��o entre () vai ter significado mais � frente! 
 		return (CaixaDeBonus)cadastro.buscar(BRANCO + codigo);
 	}
 	public CaixaDeBonus[] buscarTodos() {
 		Serializable[] rets = cadastro.buscarTodos(CaixaDeBonus.class);
 		CaixaDeBonus[] caixaBonus = new CaixaDeBonus[rets.length];
 		for(int i=0; i<rets.length; i++) {
-			// Esta opera��o entre () vai ter significado mais � frente! 
 			caixaBonus[i] = (CaixaDeBonus)rets[i];
 		}
 		return caixaBonus;
