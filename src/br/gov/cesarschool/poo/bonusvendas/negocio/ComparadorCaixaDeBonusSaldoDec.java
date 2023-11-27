@@ -6,12 +6,15 @@ import br.gov.cesarschool.poo.bonusvendas.entidade.CaixaDeBonus;
 
 public class ComparadorCaixaDeBonusSaldoDec implements Comparator<CaixaDeBonus> {
 
-    private static final ComparadorCaixaDeBonusSaldoDec instance = new ComparadorCaixaDeBonusSaldoDec();
+    private static ComparadorCaixaDeBonusSaldoDec instance;
 
     private ComparadorCaixaDeBonusSaldoDec() {
     }
 
     public static ComparadorCaixaDeBonusSaldoDec getInstance() {
+    	if (instance == null) {
+			instance = new ComparadorCaixaDeBonusSaldoDec();
+		}
         return instance;
     }
 
@@ -20,6 +23,12 @@ public class ComparadorCaixaDeBonusSaldoDec implements Comparator<CaixaDeBonus> 
         double saldo1 = caixa1.getSaldo();
         double saldo2 = caixa2.getSaldo();
 
-        return Double.compare(saldo2, saldo1);
+        if (saldo1 < saldo2) {
+            return 1;
+        } else if (saldo1 > saldo2) {
+            return -1;
+        } else {
+            return 0;
+        }
     }
 }

@@ -6,12 +6,15 @@ import br.gov.cesarschool.poo.bonusvendas.entidade.Vendedor;
 
 public class ComparadorVendedorRenda implements Comparator<Vendedor> {
 
-    private static final ComparadorVendedorRenda instance = new ComparadorVendedorRenda();
+    private static ComparadorVendedorRenda instance;
 
     private ComparadorVendedorRenda() {
     }
 
     public static ComparadorVendedorRenda getInstance() {
+    	if (instance == null) {
+			instance = new ComparadorVendedorRenda();
+		}
         return instance;
     }
 
