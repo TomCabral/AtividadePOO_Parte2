@@ -4,6 +4,6 @@ module atividadePOO_Parte2 {
 	requires org.junit.jupiter.api;
 	requires oblesqbom;
 	requires junit;
-//    exports br.gov.cesarschool.poo.bonusvendas.telas;
-//    exports br.gov.cesarschool.poo.bonusvendas.testes to junit;
+    exports br.gov.cesarschool.poo.bonusvendas.telas;
+    exports br.gov.cesarschool.poo.bonusvendas.testes to junit;
 }

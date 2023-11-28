@@ -35,10 +35,12 @@ public class DAOGenerico<T extends Registro> {
 
     public T[] buscarTodos() {
         Object[] objs = cadastro.buscarTodos();
-        T[] registros = (T[]) java.lang.reflect.Array.newInstance(objs.getClass().getComponentType(), objs.length);
+        T[] registros = (T[]) java.lang.reflect.Array.newInstance(Registro.class, objs.length);
+
         for (int i = 0; i < objs.length; i++) {
             registros[i] = (T) objs[i];
         }
         return registros;
     }
+
 }
