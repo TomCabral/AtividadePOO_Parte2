@@ -1,10 +1,9 @@
-package br.gov.cesarschool.poo.bonusvendas.entidade;
+package br.gov.cesarschool.poo.bonusvendas.entidade.geral;
 
 import java.io.Serializable;
+import br.gov.cesarschool.poo.bonusvendas.entidade.*;
 import java.util.ArrayList;
 import java.util.List;
-import br.gov.cesarschool.poo.bonusvendas.entidade.geral.Endereco;
-import br.gov.cesarschool.poo.bonusvendas.entidade.geral.Sexo;
 
 public abstract class Registro implements Serializable {
 

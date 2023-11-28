@@ -1,7 +1,7 @@
 package br.gov.cesarschool.poo.bonusvendas.daov2;
 
 import br.edu.cesarschool.next.oo.persistenciaobjetos.CadastroObjetos;
-import br.gov.cesarschool.poo.bonusvendas.entidade.Registro;
+import br.gov.cesarschool.poo.bonusvendas.entidade.geral.Registro;
 
 public class DAOGenerico<T extends Registro> {
 

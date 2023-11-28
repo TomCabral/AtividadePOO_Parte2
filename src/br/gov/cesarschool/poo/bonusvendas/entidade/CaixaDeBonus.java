@@ -2,6 +2,8 @@ package br.gov.cesarschool.poo.bonusvendas.entidade;
 
 import java.time.LocalDateTime;
 
+import br.gov.cesarschool.poo.bonusvendas.entidade.geral.Registro;
+
 public class CaixaDeBonus extends Registro {
     private long numero; 
     private double saldo; 

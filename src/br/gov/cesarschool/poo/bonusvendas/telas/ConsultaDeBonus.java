@@ -6,7 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import br.gov.cesarschool.poo.bonusvendas.dao.DAOGenerico;
 import br.gov.cesarschool.poo.bonusvendas.entidade.LancamentoBonus;
-import br.gov.cesarschool.poo.bonusvendas.entidade.Registro;
+import br.gov.cesarschool.poo.bonusvendas.entidade.geral.Registro;
 
 public class ConsultaDeBonus extends JFrame {
 

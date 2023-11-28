@@ -3,6 +3,7 @@ package br.gov.cesarschool.poo.bonusvendas.entidade;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import br.gov.cesarschool.poo.bonusvendas.entidade.geral.Endereco;
+import br.gov.cesarschool.poo.bonusvendas.entidade.geral.Registro;
 import br.gov.cesarschool.poo.bonusvendas.entidade.geral.Sexo;
 
 public class Vendedor extends Registro {
