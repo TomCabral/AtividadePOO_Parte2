@@ -1,25 +1,30 @@
-
 package br.gov.cesarschool.poo.bonusvendas.daov2;
 
 import br.gov.cesarschool.poo.bonusvendas.entidade.CaixaDeBonus;
+import br.gov.cesarschool.poo.bonusvendas.excecoes.ExcecaoObjetoJaExistente;
+import br.gov.cesarschool.poo.bonusvendas.excecoes.ExcecaoObjetoNaoExistente;
 
 public class CaixaDeBonusDAO {
-	private static final String BRANCO = "";
-	private DAOGenerico<CaixaDeBonus> dao = new DAOGenerico<>(CaixaDeBonus.class);
+    private static final String BRANCO = "";
+    private DAOGenerico<CaixaDeBonus> dao;
 
-	public boolean incluir(CaixaDeBonus caixaBonus) {
-		return dao.incluir(caixaBonus);
-	}
+    public CaixaDeBonusDAO() {
+        dao = new DAOGenerico<>(CaixaDeBonus.class, "Caixa");
+    }
 
-	public boolean alterar(CaixaDeBonus caixaBonus) {
-		return dao.alterar(caixaBonus);
-	}
+    public void incluir(CaixaDeBonus caixaBonus) throws ExcecaoObjetoJaExistente {
+        dao.incluir(caixaBonus);
+    }
 
-	public CaixaDeBonus buscar(long codigo) {
-		return dao.buscar(BRANCO + codigo);
-	}
+    public void alterar(CaixaDeBonus caixaBonus) throws ExcecaoObjetoNaoExistente {
+        dao.alterar(caixaBonus);
+    }
 
-	public CaixaDeBonus[] buscarTodos() {
-		return dao.buscarTodos();
-	}
+    public CaixaDeBonus buscar(long codigo) throws ExcecaoObjetoNaoExistente {
+        return dao.buscar(BRANCO + codigo);
+    }
+
+    public CaixaDeBonus[] buscarTodos() {
+        return dao.buscarTodos();
+    }
 }

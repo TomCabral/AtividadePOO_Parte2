@@ -8,26 +8,20 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import br.gov.cesarschool.poo.bonusvendas.dao.CaixaDeBonusDAO;
-import br.gov.cesarschool.poo.bonusvendas.dao.LancamentoBonusDAO;
+import br.gov.cesarschool.poo.bonusvendas.daov2.CaixaDeBonusDAO;
+import br.gov.cesarschool.poo.bonusvendas.daov2.LancamentoBonusDAO;
 import br.gov.cesarschool.poo.bonusvendas.entidade.CaixaDeBonus;
 import br.gov.cesarschool.poo.bonusvendas.entidade.LancamentoBonus;
 import br.gov.cesarschool.poo.bonusvendas.entidade.LancamentoBonusCredito;
 import br.gov.cesarschool.poo.bonusvendas.entidade.LancamentoBonusDebito;
 import br.gov.cesarschool.poo.bonusvendas.entidade.TipoResgate;
 import br.gov.cesarschool.poo.bonusvendas.entidade.Vendedor;
+import br.gov.cesarschool.poo.bonusvendas.excecoes.ExcecaoObjetoJaExistente;
+import br.gov.cesarschool.poo.bonusvendas.excecoes.ExcecaoObjetoNaoExistente;
+import br.gov.cesarschool.poo.bonusvendas.excecoes.ExcecaoValidacao;
 
 public class AcumuloResgateMediator {
-    private static final String CAIXA_DE_BONUS_INEXISTENTE = "Caixa de bonus inexistente";
-    private static final String VALOR_MENOR_OU_IGUAL_A_ZERO = "Valor menor ou igual a zero";
     private static AcumuloResgateMediator instancia;
-
-    public static AcumuloResgateMediator getInstancia() {
-        if (instancia == null) {
-            instancia = new AcumuloResgateMediator();
-        }
-        return instancia;
-    }
 
     private CaixaDeBonusDAO repositorioCaixaDeBonus;
     private LancamentoBonusDAO repositorioLancamento;
@@ -37,92 +31,98 @@ public class AcumuloResgateMediator {
         repositorioLancamento = new LancamentoBonusDAO();
     }
 
-    public long gerarCaixaDeBonus(Vendedor vendedor) {
+    public static AcumuloResgateMediator getInstancia() {
+        if (instancia == null) {
+            instancia = new AcumuloResgateMediator();
+        }
+        return instancia;
+    }
+
+    public long gerarCaixaDeBonus(Vendedor vendedor) throws ExcecaoObjetoJaExistente {
         LocalDate dataAtual = LocalDate.now();
         DateTimeFormatter customFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         long numero = Long.parseLong(vendedor.getCpf().substring(0, 9) + dataAtual.format(customFormatter));
         CaixaDeBonus caixa = new CaixaDeBonus(numero);
-        boolean ret = repositorioCaixaDeBonus.incluir(caixa);
-        if (ret) {
-            return numero;
-        } else {
-            return 0;
-        }
+        repositorioCaixaDeBonus.incluir(caixa);
+        return numero;
     }
 
-    public String acumularBonus(long numeroCaixaDeBonus, double valor) {
+    public void acumularBonus(long numeroCaixaDeBonus, double valor) throws ExcecaoObjetoNaoExistente, ExcecaoValidacao {
         if (valor <= 0) {
-            return VALOR_MENOR_OU_IGUAL_A_ZERO;
+            throw new ExcecaoValidacao("Valor menor ou igual a zero");
         }
         CaixaDeBonus caixa = repositorioCaixaDeBonus.buscar(numeroCaixaDeBonus);
-        if (caixa == null) {
-            return CAIXA_DE_BONUS_INEXISTENTE;
-        }
         caixa.creditar(valor);
         repositorioCaixaDeBonus.alterar(caixa);
         LancamentoBonusCredito lancamento = new LancamentoBonusCredito(numeroCaixaDeBonus, valor, LocalDateTime.now());
-        repositorioLancamento.incluir(lancamento);
-        return null;
+        try {
+            repositorioLancamento.incluir(lancamento);
+        } catch (ExcecaoObjetoJaExistente e) {
+            throw new ExcecaoValidacao("Inconsistencia no cadastro de lancamento");
+        }
     }
 
-    public String resgatar(long numeroCaixaDeBonus, double valor, TipoResgate tipoResgate) {
+    public void resgatar(long numeroCaixaDeBonus, double valor, TipoResgate tipoResgate) throws ExcecaoObjetoNaoExistente, ExcecaoValidacao {
         if (valor <= 0) {
-            return VALOR_MENOR_OU_IGUAL_A_ZERO;
+            throw new ExcecaoValidacao("Valor menor ou igual a zero");
         }
         CaixaDeBonus caixa = repositorioCaixaDeBonus.buscar(numeroCaixaDeBonus);
-        if (caixa == null) {
-            return CAIXA_DE_BONUS_INEXISTENTE;
-        }
         if (caixa.getSaldo() < valor) {
-            return "Saldo insuficiente";
+            throw new ExcecaoValidacao("Saldo insuficiente");
         }
         caixa.debitar(valor);
         repositorioCaixaDeBonus.alterar(caixa);
-        LancamentoBonusDebito lancamento = new LancamentoBonusDebito(numeroCaixaDeBonus, valor, LocalDateTime.now(),
-                tipoResgate);
-        repositorioLancamento.incluir(lancamento);
-        return null;
+        LancamentoBonusDebito lancamento = new LancamentoBonusDebito(numeroCaixaDeBonus, valor, LocalDateTime.now(), tipoResgate);
+        try {
+            repositorioLancamento.incluir(lancamento);
+        } catch (ExcecaoObjetoJaExistente e) {
+            throw new ExcecaoValidacao("Inconsistencia no cadastro de lancamento");
+        }
     }
 
-    public CaixaDeBonus[] listaCaixaDeBonusPorSaldoMaior(double saldoInicial) {
+    public CaixaDeBonus[] listaCaixaDeBonusPorSaldoMaior(double saldoInicial) throws ExcecaoObjetoNaoExistente {
         CaixaDeBonus[] todasAsCaixas = repositorioCaixaDeBonus.buscarTodos();
-
-        Arrays.sort(todasAsCaixas, new ComparadorCaixaDeBonusSaldoDec());
-
-        CaixaDeBonus[] caixasFiltradas = Arrays.stream(todasAsCaixas)
+        Arrays.sort(todasAsCaixas, ComparadorCaixaDeBonusSaldoDec.getInstance());
+        return Arrays.stream(todasAsCaixas)
                 .filter(caixa -> caixa.getSaldo() >= saldoInicial)
                 .toArray(CaixaDeBonus[]::new);
-
-        return caixasFiltradas;
     }
 
-    public LancamentoBonus[] listaLancamentosPorFaixaData(LocalDate d1, LocalDate d2) {
+    public LancamentoBonus[] listaLancamentosPorFaixaData(LocalDate d1, LocalDate d2) throws ExcecaoObjetoNaoExistente {
         LancamentoBonus[] todosOsLancamentos = repositorioLancamento.buscarTodos();
-
         List<LancamentoBonus> lancamentosFiltrados = Arrays.stream(todosOsLancamentos)
                 .filter(lancamento -> {
                     LocalDate dataLancamento = lancamento.getDataHoraLancamento().toLocalDate();
-                    return (dataLancamento.isEqual(d1) || dataLancamento.isAfter(d1))
-                            && (dataLancamento.isEqual(d2) || dataLancamento.isBefore(d2));
+                    return (dataLancamento.isEqual(d1) || dataLancamento.isAfter(d1)) && (dataLancamento.isEqual(d2) || dataLancamento.isBefore(d2));
                 })
                 .toList();
-
         Collections.sort(lancamentosFiltrados, new ComparadorLancamentoBonusDataHoraDec());
-
         return lancamentosFiltrados.toArray(new LancamentoBonus[0]);
     }
-}
 
-class ComparadorCaixaDeBonusSaldoDec implements Comparator<CaixaDeBonus> {
-    @Override
-    public int compare(CaixaDeBonus caixa1, CaixaDeBonus caixa2) {
-        return Double.compare(caixa2.getSaldo(), caixa1.getSaldo());
+    static class ComparadorCaixaDeBonusSaldoDec implements Comparator<CaixaDeBonus> {
+        private static ComparadorCaixaDeBonusSaldoDec instance;
+
+        private ComparadorCaixaDeBonusSaldoDec() {
+        }
+
+        public static ComparadorCaixaDeBonusSaldoDec getInstance() {
+            if (instance == null) {
+                instance = new ComparadorCaixaDeBonusSaldoDec();
+            }
+            return instance;
+        }
+
+        @Override
+        public int compare(CaixaDeBonus caixa1, CaixaDeBonus caixa2) {
+            return Double.compare(caixa2.getSaldo(), caixa1.getSaldo());
+        }
     }
-}
 
-class ComparadorLancamentoBonusDataHoraDec implements Comparator<LancamentoBonus> {
-    @Override
-    public int compare(LancamentoBonus lancamento1, LancamentoBonus lancamento2) {
-        return lancamento2.getDataHoraLancamento().compareTo(lancamento1.getDataHoraLancamento());
+    static class ComparadorLancamentoBonusDataHoraDec implements Comparator<LancamentoBonus> {
+        @Override
+        public int compare(LancamentoBonus lancamento1, LancamentoBonus lancamento2) {
+            return lancamento2.getDataHoraLancamento().compareTo(lancamento1.getDataHoraLancamento());
+        }
     }
 }

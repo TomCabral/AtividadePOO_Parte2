@@ -1,41 +1,25 @@
-
 package br.gov.cesarschool.poo.bonusvendas.daov2;
 
 import br.gov.cesarschool.poo.bonusvendas.entidade.LancamentoBonus;
-
-import java.io.Serializable;
-import java.time.format.DateTimeFormatter;
+import br.gov.cesarschool.poo.bonusvendas.excecoes.ExcecaoObjetoJaExistente;
+import br.gov.cesarschool.poo.bonusvendas.excecoes.ExcecaoObjetoNaoExistente;
 
 public class LancamentoBonusDAO {
-	private DAOGenerico<LancamentoBonus> dao = new DAOGenerico<>(LancamentoBonus.class);
+    private DAOGenerico<LancamentoBonus> dao = new DAOGenerico<>(LancamentoBonus.class, "Lancamento");
 
-	public boolean incluir(LancamentoBonus lancamento) {
-		String idUnico = lancamento.getIdUnico();
-		LancamentoBonus lancamentoBusca = buscar(idUnico);
-		if (lancamentoBusca != null) {
-			return false;
-		} else {
-			dao.incluir(lancamento);
-			return true;
-		}
-	}
+    public void incluir(LancamentoBonus lancamento) throws ExcecaoObjetoJaExistente {
+        dao.incluir(lancamento);
+    }
 
-	public boolean alterar(LancamentoBonus lancamento) {
-		String idUnico = lancamento.getIdUnico();
-		LancamentoBonus lancamentoBusca = buscar(idUnico);
-		if (lancamentoBusca == null) {
-			return false;
-		} else {
-			dao.alterar(lancamento);
-			return true;
-		}
-	}
+    public void alterar(LancamentoBonus lancamento) throws ExcecaoObjetoNaoExistente {
+        dao.alterar(lancamento);
+    }
 
-	public LancamentoBonus buscar(String codigo) {
-		return dao.buscar(codigo);
-	}
+    public LancamentoBonus buscar(String codigo) throws ExcecaoObjetoNaoExistente {
+        return dao.buscar(codigo);
+    }
 
-	public LancamentoBonus[] buscarTodos() {
-		return dao.buscarTodos();
-	}
+    public LancamentoBonus[] buscarTodos() {
+        return dao.buscarTodos();
+    }
 }

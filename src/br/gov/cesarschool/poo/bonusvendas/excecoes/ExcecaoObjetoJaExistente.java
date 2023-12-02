@@ -8,5 +8,5 @@ public class ExcecaoObjetoJaExistente extends Exception {
 
     public ExcecaoObjetoJaExistente(String mensagem) {
         super(mensagem);
-    }
+    }	
 }
