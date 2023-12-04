@@ -1,10 +1,9 @@
 package br.gov.cesarschool.poo.bonusvendas.negocio;
 
-import java.util.Comparator;
-
 import br.gov.cesarschool.poo.bonusvendas.entidade.Vendedor;
+import br.gov.cesarschool.poo.bonusvendas.util.Comparador;
 
-public class ComparadorVendedorRenda implements Comparator<Vendedor> {
+public class ComparadorVendedorRenda implements Comparador {
 
     private static ComparadorVendedorRenda instance;
 
@@ -12,25 +11,20 @@ public class ComparadorVendedorRenda implements Comparator<Vendedor> {
     }
 
     public static ComparadorVendedorRenda getInstance() {
-    	if (instance == null) {
-			instance = new ComparadorVendedorRenda();
-		}
+        if (instance == null) {
+            instance = new ComparadorVendedorRenda();
+        }
         return instance;
     }
 
-    // Método de comparação
     @Override
-    public int compare(Vendedor vendedor1, Vendedor vendedor2) {
-        double renda1 = vendedor1.getRenda();
-        double renda2 = vendedor2.getRenda();
-
-        // Comparação das rendas
-        if (renda1 < renda2) {
-            return -1;
-        } else if (renda1 > renda2) {
-            return 1;
-        } else {
-            return 0;
+    public int comparar(Object o1, Object o2) {
+        if (!(o1 instanceof Vendedor) || !(o2 instanceof Vendedor)) {
+            throw new IllegalArgumentException("Os objetos devem ser do tipo Vendedor");
         }
+        Vendedor vendedor1 = (Vendedor) o1;
+        Vendedor vendedor2 = (Vendedor) o2;
+
+        return Double.compare(vendedor1.getRenda(), vendedor2.getRenda());
     }
 }

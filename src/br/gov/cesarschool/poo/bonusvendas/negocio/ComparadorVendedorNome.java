@@ -1,27 +1,29 @@
 package br.gov.cesarschool.poo.bonusvendas.negocio;
 
-import java.util.Comparator;
-
 import br.gov.cesarschool.poo.bonusvendas.entidade.Vendedor;
+import br.gov.cesarschool.poo.bonusvendas.util.Comparador;
 
-public class ComparadorVendedorNome implements Comparator<Vendedor> {
+public class ComparadorVendedorNome implements Comparador {
 
-    private static final ComparadorVendedorNome instance = new ComparadorVendedorNome();
+    private static ComparadorVendedorNome instance;
 
     private ComparadorVendedorNome() {
     }
 
     public static ComparadorVendedorNome getInstance() {
+        if (instance == null) {
+            instance = new ComparadorVendedorNome();
+        }
         return instance;
     }
 
-    // Método de comparação 
     @Override
-    public int compare(Vendedor vendedor1, Vendedor vendedor2) {
-        String nomeCompleto1 = vendedor1.getNomeCompleto();
-        String nomeCompleto2 = vendedor2.getNomeCompleto();
-
-        // Comparação dos nomes
-        return nomeCompleto1.compareTo(nomeCompleto2);
+    public int comparar(Object o1, Object o2) {
+        if (!(o1 instanceof Vendedor) || !(o2 instanceof Vendedor)) {
+            throw new IllegalArgumentException("Os objetos devem ser do tipo Vendedor");
+        }
+        Vendedor vendedor1 = (Vendedor) o1;
+        Vendedor vendedor2 = (Vendedor) o2;
+        return vendedor1.getNomeCompleto().compareTo(vendedor2.getNomeCompleto());
     }
 }
